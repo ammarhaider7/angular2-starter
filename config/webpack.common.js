@@ -14,7 +14,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const HtmlElementsPlugin = require('./html-elements-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
-const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin'); 
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const ProvidePlugin = require('webpack/lib/ProvidePlugin'); 
 
 /*
  * Webpack Constants
@@ -173,7 +174,12 @@ module.exports = function(options) {
         {
           test: /\.(jpg|png|gif)$/,
           loader: 'file'
-        }
+        },
+        // Bootstrap 4 and jQuery
+        { test: /\.scss$/, loaders: ['style', 'css', 'postcss', 'sass'] },
+        { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
+        // Bootstrap 4
+        { test: /bootstrap\/dist\/js\/umd\//, loader: 'imports?jQuery=jquery' }
       ],
 
       postLoaders: [
@@ -284,6 +290,14 @@ module.exports = function(options) {
       new HtmlElementsPlugin({
         headTags: require('./head-config.common')
       }),
+
+      new ProvidePlugin({
+          jQuery: 'jquery',
+          $: 'jquery',
+          jquery: 'jquery',
+          "Tether": 'tether',
+          "window.Tether": "tether"
+      })
 
     ],
 
